@@ -3,39 +3,33 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Zuri — Profit Calculator</title>
+<title>Retail Pricing Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --forest: #0F3D2E;
-    --forest-dark: #0A2C21;
-    --gold: #C9932F;
-    --gold-light: #E4C077;
-    --cream: #F8F4EA;
+    --ink: #16211E;
+    --ink-soft: #63736C;
+    --line: #E4E1D8;
     --card: #FFFFFF;
-    --ink: #1B2A24;
-    --ink-soft: #5B6A63;
-    --line: rgba(15,61,46,0.14);
+    --bg: #F6F4EE;
+    --accent: #1F5D50;
+    --accent-dark: #143E36;
+    --accent-soft: #E7EFEC;
+    --amber: #B8863B;
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:
-      radial-gradient(1200px 600px at 50% -10%, rgba(201,147,47,0.10), transparent 60%),
-      var(--cream);
+    background:var(--bg);
     color:var(--ink);
     font-family:'Inter', sans-serif;
     min-height:100vh;
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding:56px 20px 40px;
+    padding:48px 18px 40px;
   }
-
-  /* ---- Roofline signature mark ---- */
-  .mark{ width:64px; height:56px; margin:0 auto 14px; display:block; }
-  .mark path, .mark rect, .mark circle{ stroke:var(--forest); }
 
   .eyebrow{
     text-align:center;
@@ -44,307 +38,485 @@
     font-size:11.5px;
     color:var(--ink-soft);
     font-weight:600;
-    margin:0 0 6px;
-  }
-
-  h1{
-    font-family:'Fraunces', serif;
-    font-weight:500;
-    font-size:clamp(30px,5vw,42px);
-    color:var(--forest);
-    text-align:center;
-    margin:0 0 4px;
-    letter-spacing:-0.01em;
-  }
-  .tagline{
-    text-align:center;
-    font-style:italic;
-    font-family:'Fraunces', serif;
-    color:var(--gold);
-    font-size:15px;
     margin:0 0 8px;
   }
-  .rule-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    justify-content:center;
-    margin:14px auto 36px;
-    max-width:360px;
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(28px,5vw,38px);
+    text-align:center;
+    margin:0 0 8px;
+    letter-spacing:-0.01em;
   }
-  .rule-row .line{ flex:1; height:1px; background:var(--line); }
-  .rule-row .dot{ width:5px; height:5px; border-radius:50%; background:var(--gold); }
-
-  .tiers{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:34px;
-    max-width:640px;
-  }
-  .tier-chip{
-    border:1px solid var(--line);
-    background:var(--card);
-    padding:7px 14px;
-    border-radius:100px;
-    font-size:12.5px;
+  .sub{
+    text-align:center;
     color:var(--ink-soft);
-    display:flex;
-    align-items:center;
-    gap:6px;
+    font-size:14.5px;
+    max-width:480px;
+    margin:0 auto 30px;
+    line-height:1.55;
   }
-  .tier-chip b{ color:var(--forest); font-weight:600; }
+
+  /* Tabs */
+  .tabs{
+    display:flex;
+    gap:6px;
+    background:#EEEBE1;
+    padding:4px;
+    border-radius:12px;
+    margin-bottom:28px;
+  }
+  .tab{
+    border:none;
+    background:transparent;
+    padding:9px 18px;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    border-radius:9px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .tab.active{
+    background:var(--card);
+    color:var(--accent-dark);
+    box-shadow:0 1px 3px rgba(0,0,0,0.08);
+  }
 
   .card{
     width:100%;
-    max-width:460px;
+    max-width:520px;
     background:var(--card);
     border:1px solid var(--line);
     border-radius:18px;
-    padding:34px 32px 32px;
-    box-shadow: 0 1px 2px rgba(15,61,46,0.04), 0 18px 40px -22px rgba(15,61,46,0.25);
+    padding:32px 30px 30px;
+    box-shadow: 0 1px 2px rgba(20,40,35,0.04), 0 18px 40px -24px rgba(20,40,35,0.28);
   }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; }
 
   label{
     display:block;
-    font-size:12.5px;
+    font-size:12px;
     letter-spacing:.04em;
     text-transform:uppercase;
     color:var(--ink-soft);
     font-weight:600;
-    margin-bottom:8px;
+    margin-bottom:7px;
   }
+
+  .field-row{ display:flex; gap:10px; margin-bottom:18px; }
+  .field-row > div{ flex:1; }
+
+  select, .input-wrap{
+    border:1.5px solid var(--line);
+    border-radius:11px;
+    background:#FCFBF7;
+  }
+  select{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--ink);
+    padding:13px 12px;
+    outline:none;
+    appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2363736C' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    background-size:16px;
+  }
+  select:focus{ border-color:var(--accent); box-shadow:0 0 0 4px rgba(31,93,80,0.12); }
 
   .input-wrap{
     display:flex;
     align-items:center;
-    border:1.5px solid var(--line);
-    border-radius:12px;
-    background:#FCFAF5;
-    padding:0 4px 0 16px;
+    padding:0 4px 0 14px;
     transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .input-wrap:focus-within{
-    border-color:var(--gold);
-    box-shadow:0 0 0 4px rgba(201,147,47,0.14);
-  }
+  .input-wrap:focus-within{ border-color:var(--accent); box-shadow:0 0 0 4px rgba(31,93,80,0.12); }
   .input-wrap span{
-    font-size:14.5px;
-    color:var(--ink-soft);
-    font-weight:600;
-    padding-right:8px;
-    border-right:1px solid var(--line);
+    font-size:14px; color:var(--ink-soft); font-weight:600;
+    padding-right:8px; border-right:1px solid var(--line);
+    white-space:nowrap;
   }
-  input[type=number]{
-    flex:1;
-    border:none;
-    background:transparent;
-    outline:none;
-    font-family:'Inter',sans-serif;
-    font-size:19px;
-    font-weight:600;
-    color:var(--forest);
-    padding:15px 12px;
-    width:100%;
-    -moz-appearance:textfield;
+  input[type=number], input[type=text]{
+    flex:1; border:none; background:transparent; outline:none;
+    font-family:'Inter',sans-serif; font-size:18px; font-weight:600; color:var(--accent-dark);
+    padding:14px 12px; width:100%; -moz-appearance:textfield;
   }
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button{
-    -webkit-appearance:none; margin:0;
-  }
-  input[type=number]::placeholder{ color:#B9C2BC; font-weight:500; }
+  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  input::placeholder{ color:#B7BEB8; font-weight:500; }
 
-  #hint{
-    font-size:13px;
-    color:var(--ink-soft);
-    margin-top:14px;
-    text-align:center;
+  /* Tier editor */
+  .tier-block{ margin-bottom:16px; }
+  .tier-list{ display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+  .tier-row{
+    display:flex; align-items:center; gap:6px;
+    border:1px solid var(--line); border-radius:10px; padding:8px 10px;
+    background:#FCFBF7;
   }
+  .tier-row input{
+    border:none; background:transparent; outline:none;
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:var(--ink);
+    width:100%; padding:4px 2px;
+  }
+  .tier-row .lbl{ font-size:11px; color:var(--ink-soft); font-weight:500; white-space:nowrap; }
+  .tier-row .mini{ display:flex; flex-direction:column; flex:1; min-width:0; }
+  .tier-row .mini span{ font-size:10px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.03em; margin-bottom:1px; }
+  .remove-tier{
+    border:none; background:transparent; color:#B85C4A; font-size:17px; cursor:pointer;
+    width:26px; height:26px; border-radius:7px; flex-shrink:0; line-height:1;
+  }
+  .remove-tier:hover{ background:#FBEAE6; }
+  .add-tier{
+    border:1.5px dashed var(--line); background:transparent; color:var(--accent);
+    font-size:13px; font-weight:600; border-radius:10px; padding:9px; width:100%; cursor:pointer;
+  }
+  .add-tier:hover{ background:var(--accent-soft); border-color:var(--accent); }
 
-  #result{ display:none; margin-top:26px; }
+  .flat-row{ margin-bottom:6px; }
 
-  .breakdown{
-    background:#FBF8F1;
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:18px 20px;
-  }
-  .row{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    padding:7px 0;
-    font-size:14px;
-  }
+  #hint, #hint2{ font-size:13px; color:var(--ink-soft); margin-top:16px; text-align:center; }
+
+  #result, #result2{ display:none; margin-top:22px; }
+
+  .breakdown{ background:#FBF9F3; border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+  .row{ display:flex; justify-content:space-between; align-items:baseline; padding:6px 0; font-size:13.5px; }
   .row .k{ color:var(--ink-soft); }
   .row .v{ font-weight:600; color:var(--ink); }
-  .row.total{
-    border-top:1px dashed var(--line);
-    margin-top:6px;
-    padding-top:12px;
-  }
-  .row.total .k{ color:var(--forest); font-weight:600; }
-  .row.total .v{ color:var(--forest); font-size:16px; }
-  #tier-chip-active{
-    display:inline-block;
-    background:var(--forest);
-    color:#F8F4EA;
-    font-size:11.5px;
-    font-weight:600;
-    padding:3px 10px;
-    border-radius:100px;
+  .row.total{ border-top:1px dashed var(--line); margin-top:4px; padding-top:10px; }
+  .row.total .k{ color:var(--accent-dark); font-weight:600; }
+  .row.total .v{ color:var(--accent-dark); font-size:15px; }
+  .tier-chip{
+    display:inline-block; background:var(--accent-dark); color:#EFF4F1;
+    font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px;
   }
 
   .selling-price{
-    margin-top:14px;
-    background:linear-gradient(135deg, var(--forest), var(--forest-dark));
-    border-radius:14px;
-    padding:20px 22px;
-    text-align:center;
+    margin-top:12px;
+    background:linear-gradient(135deg, var(--accent), var(--accent-dark));
+    border-radius:14px; padding:18px 20px; text-align:center;
   }
-  .selling-price p{ margin:0; }
-  .selling-price .label{
-    font-size:12px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:var(--gold-light);
-    font-weight:600;
-    margin-bottom:6px;
-  }
-  .selling-price .amount{
-    font-family:'Fraunces', serif;
-    font-size:32px;
-    color:#fff;
-    font-weight:500;
-  }
+  .selling-price .label{ font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:#CFE3DB; font-weight:600; margin-bottom:5px; }
+  .selling-price .amount{ font-family:'Fraunces', serif; font-size:30px; color:#fff; font-weight:600; }
 
-  footer{
-    margin-top:44px;
-    text-align:center;
-    color:var(--ink-soft);
-    font-size:12.5px;
-    line-height:1.9;
-  }
-  footer b{ color:var(--forest); }
-  footer .divider{
-    width:32px; height:1px; background:var(--line);
-    margin:10px auto;
-  }
+  .helper-note{ font-size:12px; color:var(--ink-soft); margin-top:14px; line-height:1.5; padding-top:12px; border-top:1px solid var(--line); }
+  .helper-note b{ color:var(--ink); }
+
+  footer{ margin-top:36px; text-align:center; color:var(--ink-soft); font-size:12px; max-width:440px; line-height:1.7; }
 
   @media (max-width:480px){
-    .card{ padding:28px 22px; }
-    .tiers{ gap:8px; }
+    .card{ padding:26px 18px; }
+    .field-row{ flex-direction:column; }
   }
 </style>
 </head>
 <body>
 
-<svg class="mark" viewBox="0 0 64 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M4 26L32 4L60 26" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M12 22V50" stroke-width="3.4" stroke-linecap="round"/>
-  <path d="M52 22V50" stroke-width="3.4" stroke-linecap="round"/>
-  <circle cx="43" cy="18" r="2.6" fill="var(--gold)" stroke="none"/>
-</svg>
+<p class="eyebrow">For Retailers</p>
+<h1>Pricing Calculator</h1>
+<p class="sub">Work out what to charge for a product — set your own markup tiers, or price from a target profit margin. Pick any currency.</p>
 
-<p class="eyebrow">Zuri Home</p>
-<h1>Profit calculator</h1>
-<p class="tagline">Better living starts here.</p>
-
-<div class="rule-row"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
-
-<div class="tiers">
-  <div class="tier-chip"><b>20%</b>&nbsp;KSh 100&ndash;9,999</div>
-  <div class="tier-chip"><b>10%</b>&nbsp;KSh 10,000&ndash;19,999</div>
-  <div class="tier-chip"><b>5%</b>&nbsp;KSh 20,000+</div>
+<div class="tabs">
+  <button class="tab active" data-tab="tiered">Tiered markup</button>
+  <button class="tab" data-tab="margin">Margin-based price</button>
 </div>
 
 <div class="card">
-  <label for="cost">Cost price</label>
-  <div class="input-wrap">
-    <span>KSh</span>
-    <input type="number" id="cost" min="0" step="1" placeholder="e.g. 3,500" />
-  </div>
-  <p id="hint">Enter a cost price of KSh 100 or more to see your pricing.</p>
 
-  <div id="result">
-    <div class="breakdown">
-      <div class="row">
-        <span class="k">Margin tier</span>
-        <span id="tier-chip-active">20%</span>
-      </div>
-      <div class="row">
-        <span class="k">Margin profit</span>
-        <span class="v" id="margin-profit"></span>
-      </div>
-      <div class="row">
-        <span class="k">Flat addition</span>
-        <span class="v">KSh 150</span>
-      </div>
-      <div class="row total">
-        <span class="k">Total profit</span>
-        <span class="v" id="total-profit"></span>
-      </div>
+  <!-- Shared currency -->
+  <div class="field-row">
+    <div>
+      <label for="currency">Currency</label>
+      <select id="currency"></select>
     </div>
-    <div class="selling-price">
-      <p class="label">Selling price</p>
-      <p class="amount" id="selling-price"></p>
+    <div id="custom-currency-wrap" style="display:none;">
+      <label for="custom-currency">Symbol</label>
+      <div class="input-wrap"><input type="text" id="custom-currency" maxlength="5" placeholder="e.g. Fr" /></div>
     </div>
   </div>
+
+  <!-- ===================== TAB 1: TIERED MARKUP ===================== -->
+  <div class="panel active" id="panel-tiered">
+
+    <div class="tier-block">
+      <label>Markup tiers <span style="font-weight:400;text-transform:none;color:var(--ink-soft);">(price range → markup %)</span></label>
+      <div class="tier-list" id="tier-list"></div>
+      <button class="add-tier" id="add-tier">+ Add tier</button>
+    </div>
+
+    <div class="flat-row">
+      <label for="flat-fee">Flat amount added on top (optional)</label>
+      <div class="input-wrap">
+        <span id="flat-currency-sym">$</span>
+        <input type="number" id="flat-fee" min="0" step="0.01" placeholder="0" />
+      </div>
+    </div>
+
+    <label for="cost">Cost price</label>
+    <div class="input-wrap">
+      <span id="cost-currency-sym">$</span>
+      <input type="number" id="cost" min="0" step="0.01" placeholder="e.g. 35.00" />
+    </div>
+    <p id="hint">Enter a cost price to see your selling price.</p>
+
+    <div id="result">
+      <div class="breakdown">
+        <div class="row"><span class="k">Markup tier</span><span id="tier-chip-active" class="tier-chip">—</span></div>
+        <div class="row"><span class="k">Markup profit</span><span class="v" id="margin-profit"></span></div>
+        <div class="row"><span class="k">Flat addition</span><span class="v" id="flat-shown"></span></div>
+        <div class="row total"><span class="k">Total profit</span><span class="v" id="total-profit"></span></div>
+      </div>
+      <div class="selling-price">
+        <p class="label">Selling price</p>
+        <p class="amount" id="selling-price"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 2: MARGIN-BASED ===================== -->
+  <div class="panel" id="panel-margin">
+    <label for="cost2">Cost price</label>
+    <div class="input-wrap">
+      <span id="cost-currency-sym2">$</span>
+      <input type="number" id="cost2" min="0" step="0.01" placeholder="e.g. 35.00" />
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <label for="margin-pct">Target profit margin</label>
+    <div class="input-wrap">
+      <input type="number" id="margin-pct" min="0" max="99" step="0.5" placeholder="e.g. 30" />
+      <span>%</span>
+    </div>
+    <p id="hint2">Margin = profit as a % of the selling price (not the cost).</p>
+
+    <div id="result2">
+      <div class="breakdown">
+        <div class="row"><span class="k">Profit</span><span class="v" id="margin2-profit"></span></div>
+        <div class="row total"><span class="k">Markup equivalent</span><span class="v" id="margin2-markup"></span></div>
+      </div>
+      <div class="selling-price">
+        <p class="label">Selling price</p>
+        <p class="amount" id="margin2-price"></p>
+      </div>
+      <p class="helper-note"><b>Selling price = Cost ÷ (1 − Margin%)</b> — the standard formula retailers use to hit a target profit margin, as opposed to a flat markup on cost.</p>
+    </div>
+  </div>
+
 </div>
 
 <footer>
-  <b>ZURI</b> &mdash; Everything your home needs, in one place.
-  <div class="divider"></div>
-  +254 758 366 801 &nbsp;·&nbsp; shoppingatzuri@gmail.com
+  Two ways to price a product: apply a markup on top of cost (tab 1), or work backwards from the profit margin you want to hit (tab 2).
 </footer>
 
 <script>
-function fmt(n){
-  return 'KSh ' + Math.round(n).toLocaleString('en-KE');
+/* ---------- Currency handling ---------- */
+/* All ISO 4217 currencies currently in active use, code -> symbol (or code itself where no distinct symbol exists) */
+const CURRENCIES = [
+  ["AED","د.إ"],["AFN","؋"],["ALL","L"],["AMD","֏"],["ANG","ƒ"],["AOA","Kz"],["ARS","$"],["AUD","A$"],
+  ["AWG","ƒ"],["AZN","₼"],["BAM","KM"],["BBD","$"],["BDT","৳"],["BGN","лв"],["BHD",".د.ب"],["BIF","FBu"],
+  ["BMD","$"],["BND","$"],["BOB","Bs."],["BRL","R$"],["BSD","$"],["BTN","Nu."],["BWP","P"],["BYN","Br"],
+  ["BZD","BZ$"],["CAD","CA$"],["CDF","FC"],["CHF","CHF"],["CLP","$"],["CNY","¥"],["COP","$"],["CRC","₡"],
+  ["CUP","$"],["CVE","$"],["CZK","Kč"],["DJF","Fdj"],["DKK","kr"],["DOP","RD$"],["DZD","دج"],["EGP","£"],
+  ["ERN","Nfk"],["ETB","Br"],["EUR","€"],["FJD","$"],["FKP","£"],["GBP","£"],["GEL","₾"],["GHS","₵"],
+  ["GIP","£"],["GMD","D"],["GNF","FG"],["GTQ","Q"],["GYD","$"],["HKD","HK$"],["HNL","L"],["HTG","G"],
+  ["HUF","Ft"],["IDR","Rp"],["ILS","₪"],["INR","₹"],["IQD","ع.د"],["IRR","﷼"],["ISK","kr"],["JMD","J$"],
+  ["JOD","JD"],["JPY","¥"],["KES","KSh"],["KGS","с"],["KHR","៛"],["KMF","CF"],["KPW","₩"],["KRW","₩"],
+  ["KWD","KD"],["KYD","$"],["KZT","₸"],["LAK","₭"],["LBP","ل.ل"],["LKR","Rs"],["LRD","$"],["LSL","L"],
+  ["LYD","ل.د"],["MAD","د.م."],["MDL","L"],["MGA","Ar"],["MKD","ден"],["MMK","K"],["MNT","₮"],["MOP","MOP$"],
+  ["MRU","UM"],["MUR","₨"],["MVR","Rf"],["MWK","MK"],["MXN","$"],["MYR","RM"],["MZN","MT"],["NAD","$"],
+  ["NGN","₦"],["NIO","C$"],["NOK","kr"],["NPR","₨"],["NZD","$"],["OMR","﷼"],["PAB","B/."],["PEN","S/"],
+  ["PGK","K"],["PHP","₱"],["PKR","₨"],["PLN","zł"],["PYG","₲"],["QAR","﷼"],["RON","lei"],["RSD","дин"],
+  ["RUB","₽"],["RWF","FRw"],["SAR","﷼"],["SBD","$"],["SCR","₨"],["SDG","ج.س."],["SEK","kr"],["SGD","S$"],
+  ["SHP","£"],["SLE","Le"],["SOS","S"],["SRD","$"],["SSP","£"],["STN","Db"],["SYP","£"],["SZL","L"],
+  ["THB","฿"],["TJS","SM"],["TMT","m"],["TND","د.ت"],["TOP","T$"],["TRY","₺"],["TTD","TT$"],["TWD","NT$"],
+  ["TZS","TSh"],["UAH","₴"],["UGX","USh"],["USD","$"],["UYU","$U"],["UZS","so'm"],["VES","Bs."],["VND","₫"],
+  ["VUV","VT"],["WST","T"],["XAF","FCFA"],["XCD","$"],["XOF","CFA"],["XPF","₣"],["YER","﷼"],["ZAR","R"],
+  ["ZMW","ZK"],["ZWL","Z$"]
+];
+
+const currencySel = document.getElementById('currency');
+const customWrap = document.getElementById('custom-currency-wrap');
+const customInput = document.getElementById('custom-currency');
+const symSpots = ['flat-currency-sym','cost-currency-sym','cost-currency-sym2'];
+
+CURRENCIES.forEach(([code, sym])=>{
+  const opt = document.createElement('option');
+  opt.value = sym;
+  opt.textContent = `${code} (${sym})`;
+  if (code === 'USD') opt.selected = true;
+  currencySel.appendChild(opt);
+});
+const otherOpt = document.createElement('option');
+otherOpt.value = 'custom';
+otherOpt.textContent = 'Other (type symbol)';
+currencySel.appendChild(otherOpt);
+
+function currentSymbol(){
+  if (currencySel.value === 'custom') return customInput.value.trim() || '';
+  return currencySel.value;
 }
-const input = document.getElementById('cost');
+function refreshSymbols(){
+  const s = currentSymbol();
+  symSpots.forEach(id => document.getElementById(id).textContent = s);
+  calcTiered();
+  calcMargin();
+}
+currencySel.addEventListener('change', () => {
+  customWrap.style.display = currencySel.value === 'custom' ? 'block' : 'none';
+  refreshSymbols();
+});
+customInput.addEventListener('input', refreshSymbols);
+
+function fmt(n){
+  const s = currentSymbol();
+  return s + ' ' + Number(n.toFixed(2)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------- Tiered markup: editable tiers ---------- */
+const tierList = document.getElementById('tier-list');
+let tiers = [
+  { min: 0, max: 10000, pct: 20 },
+  { min: 10000, max: 20000, pct: 10 },
+  { min: 20000, max: null, pct: 5 }
+];
+
+function renderTiers(){
+  tierList.innerHTML = '';
+  tiers.forEach((t, i) => {
+    const row = document.createElement('div');
+    row.className = 'tier-row';
+    row.innerHTML = `
+      <div class="mini"><span>From</span><input type="number" data-i="${i}" data-f="min" value="${t.min}" min="0" /></div>
+      <div class="mini"><span>To ${t.max===null ? '(blank = ∞)':''}</span><input type="number" data-i="${i}" data-f="max" value="${t.max===null?'':t.max}" min="0" placeholder="∞" /></div>
+      <div class="mini" style="max-width:70px;"><span>Markup %</span><input type="number" data-i="${i}" data-f="pct" value="${t.pct}" min="0" step="0.5" /></div>
+      <button class="remove-tier" data-i="${i}" title="Remove tier">×</button>
+    `;
+    tierList.appendChild(row);
+  });
+
+  tierList.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const i = +e.target.dataset.i, f = e.target.dataset.f;
+      let val = e.target.value;
+      if (f === 'max') {
+        tiers[i][f] = val === '' ? null : parseFloat(val);
+      } else {
+        tiers[i][f] = parseFloat(val) || 0;
+      }
+      calcTiered();
+    });
+  });
+  tierList.querySelectorAll('.remove-tier').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const i = +e.target.dataset.i;
+      if (tiers.length <= 1) return;
+      tiers.splice(i,1);
+      renderTiers();
+      calcTiered();
+    });
+  });
+}
+document.getElementById('add-tier').addEventListener('click', ()=>{
+  const last = tiers[tiers.length-1];
+  const newMin = last.max !== null ? last.max : (last.min + 1000);
+  tiers.push({ min: newMin, max: null, pct: 5 });
+  if (last.max === null) last.max = newMin; // close off previous open tier
+  renderTiers();
+  calcTiered();
+});
+renderTiers();
+
+/* ---------- Tab 1 calc ---------- */
+const costInput = document.getElementById('cost');
+const flatInput = document.getElementById('flat-fee');
 const resultBox = document.getElementById('result');
 const hint = document.getElementById('hint');
 
-function calc(){
-  const val = parseFloat(input.value);
+function calcTiered(){
+  const val = parseFloat(costInput.value);
+  const flat = parseFloat(flatInput.value) || 0;
 
   if (isNaN(val) || val <= 0) {
     resultBox.style.display = 'none';
     hint.style.display = 'block';
-    hint.textContent = 'Enter a cost price of KSh 100 or more to see your pricing.';
+    hint.textContent = 'Enter a cost price to see your selling price.';
     return;
   }
 
-  let rate, tierLabel;
-  if (val >= 100 && val < 10000) {
-    rate = 0.20; tierLabel = '20%';
-  } else if (val >= 10000 && val < 20000) {
-    rate = 0.10; tierLabel = '10%';
-  } else if (val >= 20000) {
-    rate = 0.05; tierLabel = '5%';
-  } else {
+  const match = tiers.find(t => val >= t.min && (t.max === null || val < t.max));
+  if (!match) {
     resultBox.style.display = 'none';
     hint.style.display = 'block';
-    hint.textContent = 'That price is below KSh 100 — outside the pricing tiers.';
+    hint.textContent = 'This cost falls outside your defined tiers — adjust the ranges above.';
     return;
   }
 
-  const marginProfit = val * rate;
-  const totalProfit = marginProfit + 150;
+  const marginProfit = val * (match.pct/100);
+  const totalProfit = marginProfit + flat;
   const sellingPrice = val + totalProfit;
+  const rangeLabel = match.max === null ? `${match.pct}% (${fmt(match.min)}+)` : `${match.pct}% (${fmt(match.min)}–${fmt(match.max)})`;
 
-  document.getElementById('tier-chip-active').textContent = tierLabel;
+  document.getElementById('tier-chip-active').textContent = rangeLabel;
   document.getElementById('margin-profit').textContent = fmt(marginProfit);
+  document.getElementById('flat-shown').textContent = fmt(flat);
   document.getElementById('total-profit').textContent = fmt(totalProfit);
   document.getElementById('selling-price').textContent = fmt(sellingPrice);
 
   resultBox.style.display = 'block';
   hint.style.display = 'none';
 }
+costInput.addEventListener('input', calcTiered);
+flatInput.addEventListener('input', calcTiered);
 
-input.addEventListener('input', calc);
+/* ---------- Tab 2: Margin-based ---------- */
+const cost2Input = document.getElementById('cost2');
+const marginPctInput = document.getElementById('margin-pct');
+const result2Box = document.getElementById('result2');
+const hint2 = document.getElementById('hint2');
+
+function calcMargin(){
+  const cost = parseFloat(cost2Input.value);
+  const marginPct = parseFloat(marginPctInput.value);
+
+  if (isNaN(cost) || cost <= 0 || isNaN(marginPct) || marginPct <= 0 || marginPct >= 100) {
+    result2Box.style.display = 'none';
+    hint2.style.display = 'block';
+    hint2.textContent = 'Margin = profit as a % of the selling price (not the cost).';
+    return;
+  }
+
+  const sellingPrice = cost / (1 - marginPct/100);
+  const profit = sellingPrice - cost;
+  const markupEquivalent = (profit / cost) * 100;
+
+  document.getElementById('margin2-profit').textContent = fmt(profit);
+  document.getElementById('margin2-markup').textContent = markupEquivalent.toFixed(1) + '% markup on cost';
+  document.getElementById('margin2-price').textContent = fmt(sellingPrice);
+
+  result2Box.style.display = 'block';
+  hint2.style.display = 'none';
+}
+cost2Input.addEventListener('input', calcMargin);
+marginPctInput.addEventListener('input', calcMargin);
+
+/* init */
+refreshSymbols();
 </script>
 
 </body>
